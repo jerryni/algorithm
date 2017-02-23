@@ -1,0 +1,11 @@
+{
+  "name": "algorithom",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Algorithom.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jerryni <jerryni2014@gmail.com>",
+  "license": "ISC"
+}

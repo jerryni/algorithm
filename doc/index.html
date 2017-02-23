@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>  | Documentation</title>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
+  <link href='assets/style.css' type='text/css' rel='stylesheet' />
+  <link href='assets/github.css' type='text/css' rel='stylesheet' />
+</head>
+<body class='documentation'>
+  <div class='max-width-4 mx-auto'>
+    <div class='clearfix md-mxn2'>
+      <div class='fixed xs-hide fix-3 overflow-auto max-height-100'>
+        <div class='py1 px2'>
+          <h3 class='mb0 no-anchor'></h3>
+          <div class='mb1'><code></code></div>
+          <input
+            placeholder='Filter'
+            id='filter-input'
+            class='col12 block input'
+            type='text' />
+          <div id='toc'>
+            <ul class='list-reset h5 py1-ul'>
+              
+                
+                <li><a
+                  href='#calculate'
+                  class="">
+                  calculate
+                  
+                </a>
+                
+                </li>
+              
+            </ul>
+          </div>
+          <div class='mt1 h6 quiet'>
+            <a href='http://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
+          </div>
+        </div>
+      </div>
+      <div class='fix-margin-3'>
+        
+          
+            <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='calculate'>
+      calculate
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Ease calculator 字符串加减法 计算器</p>
+<p><a href="https://leetcode.com/problems/basic-calculator/?tab=Description">https://leetcode.com/problems/basic-calculator/?tab=Description</a></p>
+<p>原理解释：</p>
+<ul>
+<li>数之间都用加法进行，用一个正负标志进行区分sign</li>
+<li>遇到符号就说明number结束了， 进行一次累加计算并且重置number</li>
+<li>遇到左括号就把之前的result和sign存起来</li>
+<li>遇到右括号就把括号里的结果(result*括号之前的sign),然后再与之前的结果相加</li>
+<li>循环结束后把最后的数字再累加一次</li>
+</ul>
+<p>另一种思路(未实现)：</p>
+<ul>
+<li>可以把括号前的符号记录下来，然后与括号里的+/-符号进行计算，得到是+/-， 比如负负得正</li>
+<li>再进行普通的累加</li>
+</ul>
+
+
+  <div class='pre p1 fill-light mt0'>calculate(s: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>): <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></div>
+  
+  
+
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>s</span> <code class='quiet'>(<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+	    
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number">Number</a></code>:
+        
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-string">"1 + 1"</span> = <span class="hljs-number">2</span>
+<span class="hljs-string">" 2-1 + 2 "</span> = <span class="hljs-number">3</span>
+<span class="hljs-string">"(1+(4+5+2)-3)+(6+8)"</span> = <span class="hljs-number">23</span></pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+          
+        
+      </div>
+    </div>
+  </div>
+  <script src='assets/anchor.js'></script>
+  <script src='assets/site.js'></script>
+</body>
+</html>
