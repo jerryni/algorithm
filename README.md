@@ -1,4 +1,4 @@
-## Some Algorithom record
+## Some Algorithom Implement
 
 API document is [here](http://jerryni.github.io/algorithom/doc/)
 

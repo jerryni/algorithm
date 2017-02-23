@@ -68,4 +68,193 @@ class Algorithom {
 
         return result;
     }
+
+    /**
+     * htmlAstParser 
+     *
+     * @example
+     * `<div>
+            inputbeforeContent
+            <input r-value="{name}" />
+            <p id="content">
+                <span>333</span>
+                <span style="display:block;">
+                    描述信息2
+                    <span>{name}</span>
+                </span>
+            </p>
+        </div>`
+
+     * ```js
+        [{
+            "tagName": "div",
+            "attrs": [],
+            "children": [{
+                "type": "textNode",
+                "value": "\n            inputbeforeContent\n            "
+            }, {
+                "tagName": "input",
+                "attrs": [{
+                    "attrName": "r-value",
+                    "value": "{name}"
+                }]
+            }, {
+                "type": "textNode",
+                "value": "\n            "
+            }, {
+                "tagName": "p",
+                "attrs": [{
+                    "attrName": "id",
+                    "value": "content"
+                }],
+                "children": [{
+                    "type": "textNode",
+                    "value": "\n                "
+                }, {
+                    "tagName": "span",
+                    "attrs": [],
+                    "children": [{
+                        "type": "textNode",
+                        "value": "333"
+                    }]
+                }, {
+                    "type": "textNode",
+                    "value": "\n                "
+                }, {
+                    "tagName": "span",
+                    "attrs": [{
+                        "attrName": "style",
+                        "value": "display:block;"
+                    }],
+                    "children": [{
+                        "type": "textNode",
+                        "value": "\n                    描述信息2\n                    "
+                    }, {
+                        "tagName": "span",
+                        "attrs": [],
+                        "children": [{
+                            "type": "textNode",
+                            "value": "{name}"
+                        }]
+                    }]
+                }]
+            }]
+        }]
+     * ```
+     * @param  {String} htmlStr 
+     * @return {Object}         ast
+     */
+    htmlAstParser(htmlStr) {
+
+        var regs = {
+
+            // 自闭合标签
+            selfCloseTag: /<(\w+)([^<]*)\/>/i,
+
+            // 开标签
+            startTag: /(^[^<>]*)<(\w+)([^<]*)>/i,
+
+            // 标签结尾
+            closeTag: /^([^<>]*)<\/(\w+)>/i
+        },
+        ast = []
+
+        // 先写出整体的tag， 内容/属性先忽略
+        function parse(_ast){
+            var match = regs.startTag.exec(htmlStr)
+
+            if (match) {
+                var macthedTotalStr = match[0],
+                    beforeStartTagTextNode = match[1] || '',
+                    tagName = match[2],
+                    newAst,
+                    node,
+                    newMatch,
+                    subMatch,
+                    attrs = []
+
+                // 开标签前的文本内容
+                if(beforeStartTagTextNode){
+                    _ast.push({
+                        type: 'textNode',
+                        value: beforeStartTagTextNode
+                    })
+                }
+
+                // 是否是自闭合标签
+                if (subMatch = regs.selfCloseTag.exec(macthedTotalStr)) {
+                    attrs = subMatch[2].trim().split(' ');
+                    attrs = attrs.map(item => {
+                        return {
+                            attrName: item.split('=')[0],
+                            value: item.split('=')[1].replace(/"/g,'')
+                        }
+                    })
+
+                    _ast.push({
+                        tagName,
+                        attrs
+                    })
+
+                    // 截取掉匹配过的内容
+                    htmlStr = htmlStr.slice(match.index + macthedTotalStr.length)
+
+                    newAst = _ast // 用原来的节点
+
+                } else { //开标签 创建一个tagName, children
+                    
+                    // 添加属性
+                    if(match[3]) {
+                        attrs = match[3].trim().split(' ');
+
+                        attrs = attrs.map(item => {
+                            return {
+                                attrName: item.split('=')[0],
+                                value: item.split('=')[1].replace(/"/g,'')
+                            }
+                        })    
+                    }
+                    
+                    node = {
+                        tagName,
+                        attrs,
+                        children: []
+                    };
+
+                    // 截取掉匹配过的内容
+                    htmlStr = htmlStr.slice(match.index + macthedTotalStr.length)
+
+                    // 匹配到下一个是否是闭合标签，如果是就按照自闭合标签处理
+                    newMatch = regs.closeTag.exec(htmlStr)
+                    if(newMatch){
+
+                        // 标签名相同 说明是匹配的一对
+                        if(newMatch[2] == tagName){
+                            htmlStr = htmlStr.slice(newMatch.index + newMatch[0].length)
+                            if(newMatch[1]){
+                                node.children.push({
+                                    type: 'textNode',
+                                    value: newMatch[1]
+                                })
+                            }
+
+                            _ast.push(node)
+                            newAst = _ast // 用原来的节点
+                        }
+                    } else{
+
+                        _ast.push(node)
+                        newAst = node.children // 用新的节点
+                    }
+                }
+
+                // 进入递归
+                return parse(newAst)
+            } else {
+                return ast
+            }
+        }
+
+        return parse(ast);
+    }
 }

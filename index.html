@@ -9,9 +9,21 @@
     <script type="text/javascript">
         var alg = new Algorithom()
 
-        alert(alg.calculate('(1+(4+5+2)-3)+(6+8)'))
+        // alert(alg.calculate('(1+(4+5+2)-3)+(6+8)'))
 
+        var str = `<div>
+            inputbeforeContent
+            <input r-value="{name}" />
+            <p id="content">
+                <span>333</span>
+                <span style="display:block;">
+                    描述信息2
+                    <span>{name}</span>
+                </span>
+            </p>
+        </div>`
 
+        console.log(JSON.stringify(alg.htmlAstParser(str)))
     </script>
 </body>
 </html>
