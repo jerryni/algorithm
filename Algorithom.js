@@ -39,10 +39,10 @@ class Algorithom {
         }
 
         for (i = 0; i < s.length; i++) {
-            c = s[i];
+            c = s[i]
 
             if (/^[0-9]+$/.test(c)) {
-                number = number * 10 + parseInt(c);
+                number = number * 10 + parseInt(c)
             } else if (c == '+' || c == '-') {
                 result += sign * number
                 sign = c == '+' ? 1 : -1
@@ -66,7 +66,7 @@ class Algorithom {
 
         result += sign * number
 
-        return result;
+        return result
     }
 
     /**
