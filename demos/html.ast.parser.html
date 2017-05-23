@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>html ast parser</title>
+    <style type="text/css">
+    .half {
+        float: left;
+        width: 50%;
+    }
+
+    textarea {
+        width: 100%;
+        height: 300px;
+    }
+    .tpl {
+        height: 200px;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="box">
+    <div class="half">
+        <p>TplStr:</p>
+        <textarea name="" id="htmlStr"></textarea>
+    </div>
+    <div class="half">
+        <p>Ast:</p>
+        <textarea name="" id="ast"></textarea>
+    </div>
+    <div class="half">
+        <p>CutStr:</p>
+        <textarea name="" id="cutStr"></textarea>
+    </div>
+    <div class="half">
+        <p>Ast Node:</p>
+        <textarea name="" id="addedNode"></textarea>
+    </div>
+    </div>
+
+    <p>originTpl:</p>
+    <textarea id="tplTxt" class="tpl"></textarea>
+    
+    <script type="text/bind" id="tpl">
+        <input type="file" name="" value="file" />
+        <div>
+            inputbeforeContent
+            <input r-value="{name}" />
+            <p id="content">
+                <span>text1</span>
+                <span style="display:block;">
+                    text2
+                    <span>{name}</span>
+                </span>
+            </p>
+        </div>
+    </script>
+    <script type="text/javascript">
+
+    let Timer = 1000,
+        num = 1
+
+    function print({
+            originHtml='', 
+            ast={}, 
+            cutStr = '', 
+            addedNode={} 
+        }) {
+        let _ast = JSON.parse(JSON.stringify(ast)),
+            _originHtml = originHtml,
+            _cutStr = cutStr,
+            _addedNode = JSON.parse(JSON.stringify(addedNode))
+
+        Timer += 3000
+
+        setTimeout(() => {
+            document.getElementById('htmlStr').value = _originHtml
+            document.getElementById('ast').value = JSON.stringify(_ast, undefined, 4)
+
+            if(cutStr) {
+                document.getElementById('cutStr').value += `${num}.\n${_cutStr}\n`
+                document.getElementById('addedNode').value += 
+                    `${num}.\n${JSON.stringify(_addedNode, undefined, 4)}\n`
+
+                num++
+            }
+        }, Timer)
+    }
+
+    function startParse(htmlStr) {
+
+        let ast = [],
+            regs = {
+
+                // 自闭合标签
+                selfCloseTag: /<(\w+)([^<]*)\/>/i,
+
+                // 开标签
+                startTag: /(^[^<>]*)<(\w+)([^<]*)>/i,
+
+                // 标签结尾
+                closeTag: /^([^<>]*)<\/(\w+)>/i
+            }
+        
+        print({
+            originHtml: htmlStr,
+            ast
+        })
+
+        // 先写出整体的tag， 内容/属性先忽略
+        function parse(_ast){
+            let newAst,
+                node,
+                addedNode,
+                isSelfCloseTagMatch,
+                isCloseTagMatch,
+                match = regs.startTag.exec(htmlStr)
+
+            if(!match) {
+                
+                // 解析完成
+                return ast
+            }
+
+            let [macthedTotalStr, txtBeforeStartTag, tagName, attrs]  = match
+
+            // 开标签前的文本内容
+            if(txtBeforeStartTag){
+                _ast.push({
+                    type: 'textNode',
+                    value: txtBeforeStartTag
+                })
+            }
+
+            // 是否是自闭合标签
+            isSelfCloseTagMatch = regs.selfCloseTag.exec(macthedTotalStr)
+            if (isSelfCloseTagMatch) {
+                attrs = isSelfCloseTagMatch[2].trim().split(/\s+/)
+                attrs = attrs.map(item => {
+                    return {
+                        attrName: item.split('=')[0],
+                        value: item.split('=')[1].replace(/"/g,'')
+                    }
+                })
+
+                addedNode = {
+                    tagName,
+                    attrs
+                }
+
+                _ast.push(addedNode)
+
+                // 截取掉匹配过的内容
+                htmlStr = htmlStr.slice(match.index + macthedTotalStr.length)
+
+                newAst = _ast // 用原来的节点
+
+                print({
+                    originHtml: htmlStr,
+                    ast,
+                    cutStr: macthedTotalStr,
+                    addedNode: addedNode
+                })
+            } else { //开标签的情况： 创建一个tagName, children
+                
+                // 添加属性
+                if(attrs) {
+                    attrs = attrs.trim().split(' ').map(item => {
+                        return {
+                            attrName: item.split('=')[0],
+                            value: item.split('=')[1].replace(/"/g,'')
+                        }
+                    })    
+                }
+                
+                node = {
+                    tagName,
+                    attrs,
+                    children: []
+                }
+
+                // 截取掉匹配过的内容
+                htmlStr = htmlStr.slice(match.index + macthedTotalStr.length)
+
+                // 匹配到下一个是否是闭合标签，如果是就按照自闭合标签处理
+                isCloseTagMatch = regs.closeTag.exec(htmlStr)
+                if(isCloseTagMatch){
+
+                    let [matchedStr, textNodeStr, tagName2] = isCloseTagMatch
+
+                    // 标签名相同 说明是匹配的一对
+                    if(tagName2 == tagName){
+                        
+                        // 截取掉匹配过的内容
+                        htmlStr = htmlStr.slice(isCloseTagMatch.index + matchedStr.length)
+                        
+                        // 匹配到的文本内容添加到子节点里
+                        if(textNodeStr){
+                            node.children.push({
+                                type: 'textNode',
+                                value: textNodeStr
+                            })
+                        }
+                    }
+
+
+                    _ast.push(node)
+                    newAst = _ast // 用原来的节点
+
+                } else{
+
+                    _ast.push(node)
+                    newAst = node.children // 用新的子节点
+                }
+
+                print({
+                    originHtml: htmlStr,
+                    ast,
+                    cutStr: macthedTotalStr + (isCloseTagMatch || ''),
+                    addedNode: node
+                })
+            }
+            
+            // 一轮解析完成之后，传入新的ast节点，再进行解析
+            return parse(newAst)
+        }
+
+        return parse(ast)  
+    }
+
+    var htmlStr = document.getElementById('tpl').innerText
+
+    document.getElementById('tplTxt').value = htmlStr
+    startParse(htmlStr)
+
+    </script>
+</body>
+
+</html>
