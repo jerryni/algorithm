@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>debug patch</title>
+</head>
+
+<body>
+    <h1>debug places:</h1>
+    <ul>
+        <li>vm.__patch__</li>
+        <li>patch</li>
+        <li>patchVnode</li>
+        <li>updateChildren</li>
+    </ul>
+    <div id="app"></div>
+
+    <script src="./vue-2.5.16.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            template: `
+            <div class="container">
+                <component v-for="todo in todos" :is="todo.type" :key="todo.key">
+                    {{ todo.text }}
+                </component>
+
+                <button @click="changeTodos">update</button>
+            </div>`,
+
+            data: {
+                todos: [{
+                        type: 'b',
+                        text: '1'
+                    },
+                    {
+                        type: 'strong',
+                        text: '2'
+                    },
+                    {
+                        type: 'em',
+                        text: '3',
+                        key: '3'
+                    },
+                    {
+                        type: 'i',
+                        text: '4',
+                        key: '4'
+                    }
+                ]
+            },
+
+            methods: {
+                changeTodos() {
+                    this.todos = [{
+                            type: 'span',
+                            text: '5'
+                        },
+                        {
+                            type: 'p',
+                            text: '6'
+                        },
+                        {
+
+                            type: 'i',
+                            text: '4',
+                            key: '4'
+                        },
+                        {
+                            type: 'em',
+                            text: '3',
+                            key: '3'
+                        }
+                    ];
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
