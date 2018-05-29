@@ -1,13 +1,13 @@
-class Algorithom {
+class Algorithm {
     constructor() {}
 
     /**
      * Ease calculator 字符串加减法 计算器
-     * 
+     *
      * https://leetcode.com/problems/basic-calculator/?tab=Description
      *
      * 原理解释：
-     * 
+     *
      * - 数之间都用加法进行，用一个正负标志进行区分sign
      * - 遇到符号就说明number结束了， 进行一次累加计算并且重置number
      * - 遇到左括号就把之前的result和sign存起来
@@ -17,12 +17,12 @@ class Algorithom {
      * 另一种思路(未实现)：
      * - 可以把括号前的符号记录下来，然后与括号里的+/-符号进行计算，得到是+/-， 比如负负得正
      * - 再进行普通的累加
-     * 
+     *
      * @example
      * "1 + 1" = 2
      * " 2-1 + 2 " = 3
      * "(1+(4+5+2)-3)+(6+8)" = 23
-     * 
+     *
      * @param  {String} s
      * @return {Number}
      */
@@ -70,7 +70,7 @@ class Algorithom {
     }
 
     /**
-     * htmlAstParser 
+     * htmlAstParser
      *
      * @example
      * `<div>
@@ -141,7 +141,7 @@ class Algorithom {
             }]
         }]
      * ```
-     * @param  {String} htmlStr 
+     * @param  {String} htmlStr
      * @return {Object}         ast
      */
     htmlAstParser(htmlStr) {
